@@ -1,11 +1,32 @@
 
 import torch
 import torch.nn as nn
-from base_model import conv_block_nested
-from base_model import output_block_conv
+# from base_model import conv_block_nested
+# from base_model import output_block_conv
+class conv_block_nested(nn.Module):
+
+    def __init__(self, in_ch, mid_ch, out_ch):
+        super(conv_block_nested, self).__init__()
+        self.activation = nn.ReLU(inplace=True)
+        #self.activation = Mish()
+        self.conv1 = nn.Conv2d(in_ch, mid_ch, kernel_size=3, padding=1, bias=True)
+        self.bn1 = nn.BatchNorm2d(mid_ch)
+        self.conv2 = nn.Conv2d(mid_ch, out_ch, kernel_size=3, padding=1, bias=True)
+        self.bn2 = nn.BatchNorm2d(out_ch)
+
+    def forward(self, x):
+        x = self.conv1(x)
+        x = self.bn1(x)
+        x = self.activation(x)
+
+        x = self.conv2(x)
+        x = self.bn2(x)
+        output = self.activation(x)
+
+        return output
 class NestUnet(nn.Module):
 
-    def __init__(self, in_ch=6, out_ch=1):
+    def __init__(self, in_ch=3, out_ch=1):
         super(NestUnet, self).__init__()
 
         n1 = 64
@@ -36,7 +57,7 @@ class NestUnet(nn.Module):
 
 
         self.final = nn.Sequential(nn.Conv2d(filters[0], out_ch, kernel_size=1),nn.Sigmoid())
-        self.output = output_block_conv(filters[0],1)
+        self.output = nn.Conv2d(filters[0],1,kernel_size=1, bias=False)
 
     def forward(self, x, y):
 
@@ -97,7 +118,7 @@ class NestUnet(nn.Module):
         output2 = self.output(xy0_2)
         output3 = self.output(xy0_3)
         output4 = self.output(xy0_4)
-        output5 = output_block_conv(4,1)(torch.cat([output1,output2,output3,output4],-1))
+       # output5 = self.output(4,1)(torch.cat([output1,output2,output3,output4],-1))
 
 
 
