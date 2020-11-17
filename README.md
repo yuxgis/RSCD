@@ -1,10 +1,10 @@
 # RSCD(remote sensing change detection) project
 
-###a method for remote sensing binary change detection 
+a method for remote sensing binary change detection 
 
 
 
-####Usages
+Usages
 you can setting you train parameters in config_segmentation.json
 ```python
 python -u train.py
@@ -14,7 +14,7 @@ python -u train.py
 
 
 
-####dependency 
+dependency 
 
 pytorch  
 visdom  
